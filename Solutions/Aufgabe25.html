@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<title>Lösung zur 25. Aufgabe</title>
+<style>
+body { margin: 0; padding: 0; }
+#canvas { width: 100%; }
+</style>
+<script>
+var	dx = 5, /* Fahrgeschwindigkeit */
+	dalpha = 4, /* Reifengeschwindigkeit */
+	rate = 1, /* Wiedergaberate 100% */
+	ani, /* Animationsintervallgeber */
+	c, /* Zeichen-Canvas */
+	grassHeight = 130, /* Höhe des Grases */
+	carX = -400, /* Anfangsposition des Autos */
+	carY = 300, /* Y-Position des Autos */
+	carWidth = 400, /* Breite des Autos */
+	carHeight = 130, /* Höhe des Autos */
+	tiresRotate = 0, /* Aktueller Reifenwinkel */
+	tiresDelta = 75, /* jeweiliger Abstand zum Ende des Autos */
+	suspension = 20, /* Abstand der Achsen */
+	radius = 60, /* Reifenradius */
+	cloudX = 20;
+
+function play(s) {
+	if(ani) { /* Animation läuft bereits */
+		clearInterval(ani); /* Also pausieren durch löschen des Intervalls */
+		ani = null; /* Zur Sicherheit nochmal null-referenzieren */
+		s.innerHTML = 'Abspielen'; /* Button soll entsprechend benannt werden */
+	} else  {
+		ani = setInterval(drawCanvas, 40); /* Intervall - starten */
+		s.innerHTML = 'Pause'; /* Button soll entsprechend benannt werden */
+	}
+}
+
+function drawCanvas() { /* Methode zum Zeichnen des Canvases */
+	if(!c)
+		c = document.getElementById('canvas').getContext('2d'); /* Canvas-Context merken */
+		
+	var rotate = tiresRotate / 180 * Math.PI; /* Umwandlung von Grad in RAD */
+	c.clearRect(0, 0, c.canvas.width, c.canvas.height); /* Zunächst alles löschen */
+	c.save(); /* Aktuellen Zustand (Trafo, Stift, ...) speichern */
+	
+	drawGrass(); /*Zeichnet das Gras */
+
+	c.translate(cloudX, 0);
+	drawCloud(); /* Zeichnet die Wolke - diese hat eine eigene Geschwindigkeit */
+	c.translate(-cloudX, 0);
+
+	c.translate(carX, 0); /* Wieder der Trick mit der Koordinaten-Trafo */
+	drawCar(); /*Zeichnet das Auto */
+	
+	c.translate(tiresDelta, carY + carHeight + suspension); /* Translation zum Mittelpunkt des 1. Reifens */
+	c.rotate(rotate); /* Rotation des 1. Reifens */
+	drawTire(); /* Reifen 1 (Hinten) zeichnen */
+	
+	c.rotate(-rotate); /* Rotation rückgängig wg. Translation */
+	
+	c.translate(carWidth - 2 * tiresDelta - 5, 0); /* Koordinaten-Trafo für 2. Reifen */
+	c.rotate(rotate); /* Rotation des 2. Reifens */
+	drawTire(); /* Reifen 2 (Vorne) zeichnen */
+	
+	c.restore(); /* Zustand wiederherstellen */
+	tiresRotate += dalpha; /* Rotation um dalpha erhöhen */
+	carX += dx; /* Position um dx erhöhen */
+	cloudX += 4;
+
+	if(carX > c.canvas.width) /* Periodische Randbedingung */
+		carX = -carWidth - 10;
+		
+	if(cloudX > c.canvas.width) /*Auch für die Wolke */
+		cloudX = -400;
+}
+
+function drawGrass() {
+	var grad = c.createLinearGradient(0, c.canvas.height - grassHeight, 0, c.canvas.height); /* Gras schöner durch Gradienten */
+	grad.addColorStop(0, '#33CC00'); /* Dunkleres Grün */
+	grad.addColorStop(1, '#66FF22'); /* Helleres Grün */
+	c.fillStyle = grad; /* Das Gras zeichnen */
+	c.lineWidth = 0; /* Ohne Linienfarbe */
+	c.fillRect(0, c.canvas.height - grassHeight, c.canvas.width, grassHeight); /* Rechteck füllen */
+}
+
+function drawCar() {
+	c.strokeStyle = '#FF6600'; /* Rahmenfarbe */
+	c.lineWidth = 2; /* Liniendicke */
+	c.fillStyle = '#FF9900'; /* Orange-Deckig */
+	c.beginPath(); /* Rahmen beginnen */
+	c.rect(0, carY, carWidth, carHeight); /* Rechteck */
+	c.stroke(); /* Vor dem Schließen zeichnen */
+	c.fill(); /* Und auch füllen */
+	c.closePath(); /* Schließen! */
+}
+
+function drawTire() { /* Zeichnet die Reifen */
+	c.strokeStyle = '#3300FF'; /* Setzen der entsprechenden Farben */
+	c.lineWidth = 1;
+	c.fillStyle = '#0099FF'; /* Nun gehts los mit dem Pfad */
+	c.beginPath();
+	c.arc(0, 0, radius, 0, 2 * Math.PI, false); /* 0 bis 2 * Math.PI ist 0 bis 360° - ein ganzer Kreis! angefangen bei 0,0 (Mittelpunkt) über Radius und NICHT entgegenläufig (ist egal) */
+	c.fill(); /* Passt! Füllen */
+	c.closePath(); /* Schließen - wir haben wieder nichts verbunden */
+	c.beginPath();
+	c.moveTo(radius, 0);
+	c.lineTo(-radius, 0); /* Dies ist die erste Linie von Links nach Rechts */
+	c.stroke();
+	c.closePath();
+	c.beginPath();
+	c.moveTo(0, radius);
+	c.lineTo(0, -radius); /* Dies ist die zweite Linie von Oben nach Unten */
+	c.stroke();
+	c.closePath();
+}
+
+function drawCloud() {
+	c.beginPath(); /* Fangen eine komplexe eigene Form an */
+    c.moveTo(170, 80); /* An einem Punkt */
+    c.bezierCurveTo(130, 100, 130, 150, 230, 150); /* Kurven */
+    c.bezierCurveTo(250, 180, 320, 180, 340, 150);
+    c.bezierCurveTo(420, 150, 420, 120, 390, 100);
+    c.bezierCurveTo(430, 40, 370, 30, 340, 50);
+    c.bezierCurveTo(320, 5, 250, 20, 250, 50);
+    c.bezierCurveTo(200, 5, 150, 20, 170, 80);
+    c.closePath(); /* Verbindung vom letzten Punkt zum ersten */
+    var grad = c.createRadialGradient(238, 50, 10, 238, 50, 200); /* Füllen mit Radialen Farbverlauf */
+    grad.addColorStop(0, "#8ED6FF"); /* Leichteres Blau */
+    grad.addColorStop(1, "#004CB3"); /* Dunkleres Blau */
+    c.fillStyle = grad;
+    c.fill(); /* Füllen */
+}
+
+function speed(delta) { /* Setzt die Geschwindigkeit */
+	var newRate = Math.max(rate + delta, 0.1); /* Neue Rate ist zwischen 0.1 und unendlich mit 1 = Standard */
+	var f = newRate / rate; /* Berechnung für die Änderungen an dx und dalpha */
+	dx = f * dx; /* Neues dx */
+	dalpha = f * dalpha; /* Neues dalpha */
+	rate = newRate; /* Setzen die Rate auf die neue Rate */
+}
+</script>
+</head>
+<body onload="drawCanvas();">
+<canvas id="canvas" width="1000" height="600">Ihr Browser unterstützt das <code>&lt;canvas&gt;</code>-Element noch nicht!</canvas>
+<div id="controls">
+<button type="button" onclick="speed(-0.1);">Langsamer</button>
+<button type="button" onclick="play(this);">Abspielen</button>
+<button type="button" onclick="speed(+0.1);">Schneller</button>
+</div>
+<footer>
+	&copy; <address style="display: inline;">Florian Rappl</address>. Zuletzt aktualisiert am <time datetime="2011-11-21T19:43Z" style="display: inline;">20.11.2011 um 20:43</time>
+</footer>
+</body>
+</html>

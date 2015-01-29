@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Lösung zur 24. Aufgabe</title>
+<style>
+input, select { display: block; width: 150px; height: 30px; border: 1px solid #CCC; margin: 10px 0; }
+select { margin-top: 0; width: 250px; box-sizing: content-box; }
+input:before { display: inline-block; width: 90px; padding-left: 10px; text-align: left; }
+#x:before { content: 'X'; }
+#y:before { content: 'Y'; }
+#w:before { content: 'Breite'; }
+#h:before { content: 'Höhe'; }
+#d:before { content: 'Dicke'; }
+#stroke:before { content: 'Rahmen'; }
+#fill:before { content: 'Füllung'; }
+button { border-radius: 5px; width: 150px; height: 30px; margin: 10px 0 0 100px; background: #CCC; border: 1px solid #666; box-shadow: 0 3px 3px #333; display: block; }
+button:hover { background: #DDD; cursor: pointer; }
+#controls { float: left; margin-right: 20px; }
+#frame { display: inline-block; }
+p { display: inline-block; width: 320px; }
+p.right { text-align: right; }
+</style>
+<!-- Binden RaphaelJS ein - soll die Arbeit mit SVG erleichtern -->
+<script src="Aufgabe24.Raphael.js"></script>
+<script>
+//Hier stehen die notwendigen JavaScript Codezeilen
+var	c, /*Hier kommt das Raphael Paper Objekt rein*/
+	x = 320,
+	y = 240, 
+	typ = 0,
+	w = 50,
+	h = 50,
+	d = 1,
+	stroke = '#CCCCCC',
+	fill =  '#FFAA00';
+
+function setHandlers() {
+	//Change EventHandler festlegen (mit Standardwerten)
+	document.getElementById('x').onchange = function() { x = this.value * 1 || 0; this.value = x; };
+	document.getElementById('y').onchange = function() { y = this.value * 1 || 0; this.value = y; };
+	document.getElementById('w').onchange = function() { w = this.value * 1 || 1; this.value = w; };
+	document.getElementById('h').onchange = function() { h = this.value * 1 || 1; this.value = h; };
+	document.getElementById('d').onchange = function() { d = this.value * 1 || 1; this.value = d; };
+	document.getElementById('type').onchange = function() { typ = this.value * 1 || 0; };
+	document.getElementById('stroke').onchange = function() { stroke = this.value; };
+	document.getElementById('fill').onchange = function() { fill = this.value; };
+	c = Raphael(document.getElementById('canvas'), 640, 480);/* Setzt den paper Context*/
+}
+
+//Zeichenmethode
+function draw() {
+	var item; // Hier speichern wir die aktuelle Zeichnung (das Objekt) rein
+	//Abfrage des Typs => Zeichnung -- ist nun wesentlich weniger als im Canvas !
+	switch(typ) {
+		case 1://Dreieck
+			item = c.path('M' + x + ' ' + y + ' L' + (x + w / 2) + ' ' + (y + h) + ' L' + (x + w) + ' ' + y + ' Z');
+			break;
+		case 2://Rechteck
+			item = c.rect(x, y, w, h);
+			break;
+		case 3://Ellipse - viel leichter als in Canvas!
+			item = c.ellipse(x, y, w, h);
+			break;
+		default://Linie zeichnen
+			item = c.path('M' + x + ' ' + y + ' L' + (x + w) + ' ' + (y + h));
+			break;
+	}
+	//Setzen der Zeichenstile; nun danach - im Canvas davor
+	item.attr('stroke', stroke);
+	item.attr('fill', fill);
+	item.attr('stroke-width', d);
+}
+
+function resetImage() { /* Setzt das Bild zurück -- Entfernt alle Objekte */
+	c.clear();
+}
+</script>
+</head>
+<body onload="setHandlers();">
+<!-- Der Canvas => Jetzt das Paper -->
+<div id="frame">
+<div id="canvas" style="border:1px solid #CCC; height: 480px; width: 640px;"></div>
+<!-- Noch ein paar mehr Funktionen -->
+<div id="further">
+<p class="right"><a href="#" onclick="return resetImage();">Zurücksetzen</a></p>
+</div>
+</div>
+<!-- Die Steuerelemente / Alles gleich -->
+<div id="controls">
+<select id="type">
+<option value="0">Linie</option>
+<option value="1">Dreieck</option>
+<option value="2">Rechteck</option>
+<option value="3">Ellipse</option>
+</select>
+<input type="range" placeholder="x" id="x" value=320 min=0 max=640 />
+<input type="range" placeholder="y" id="y" value=240 min=0 max=480 />
+<input type="number" placeholder="Breite" id="w" min=1 max=800 value=50 />
+<input type="number" placeholder="Höhe" id="h" min=1 max=800 value=50 />
+<input type="range" placeholder="Dicke" id="d" min=1 max=25 value=1 />
+<input type="color" placeholder="Rahmenfarbe" id="stroke" value="#CCCCCC" />
+<input type="color" placeholder="Füllfarbe" id="fill" value="#FFAA00" />
+<button type="button" onclick="draw();">Zeichnen</button>
+</div>
+<footer>&copy; <address style="display: inline;">Florian Rappl</address>. Zuletzt aktualisiert am <time datetime="2011-11-21T19:51Z" style="display: inline;">21.11.2011 um 20:51</time></footer>
+</body>
+</html>

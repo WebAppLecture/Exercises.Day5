@@ -1,0 +1,91 @@
+﻿<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<title>Lösung zur 23. Aufgabe</title>
+<style>
+/* Für diese Aufgabe wurde CSS ohne Präfixe geschrieben und dann über http://prefixmycss.com/ gepräfixt */
+body > div
+{
+	border:1px solid #000;
+	background:#923;
+	width:200px;
+	height:100px;
+	margin:20px;
+	/*transition*/
+	-webkit-transition:all 2s;
+	   -moz-transition:all 2s;
+		 -o-transition:all 2s;
+			transition:all 2s;
+}
+body
+{
+	overflow-x: hidden;
+	/*transform*/
+	-webkit-transform:rotate(5deg) translate(50px, 70px);
+	   -moz-transform:rotate(5deg) translate(50px, 70px);
+		-ms-transform:rotate(5deg) translate(50px, 70px);
+		 -o-transform:rotate(5deg) translate(50px, 70px);
+			transform:rotate(5deg) translate(50px, 70px);
+}
+#eins:hover
+{
+	background:#CF2F00;
+	/*transform*/
+	-webkit-transform:translate(50px, -20px);
+	   -moz-transform:translate(50px, -20px);
+		-ms-transform:translate(50px, -20px);
+		 -o-transform:translate(50px, -20px);
+			transform:translate(50px, -20px);
+}
+#zwei:hover
+{
+	background:#6F8F00;
+	/*transform*/
+	-webkit-transform:translate(-15px, 30px) rotate(90deg);
+	   -moz-transform:translate(-15px, 30px) rotate(90deg);
+		-ms-transform:translate(-15px, 30px) rotate(90deg);
+		 -o-transform:translate(-15px, 30px) rotate(90deg);
+			transform:translate(-15px, 30px) rotate(90deg);
+}
+#drei:hover
+{
+	background:#1FDF00;
+	/*transform*/
+	-webkit-transform:rotate(45deg);
+	   -moz-transform:rotate(45deg);
+		-ms-transform:rotate(45deg);
+		 -o-transform:rotate(45deg);
+			transform:rotate(45deg);
+}
+#vier:hover
+{
+	background:#006F8F;
+	/*transform*/
+	-webkit-transform:skewY(50deg) rotate(50deg);
+	   -moz-transform:skewY(50deg) rotate(50deg);
+		-ms-transform:skewY(50deg) rotate(50deg);
+		 -o-transform:skewY(50deg) rotate(50deg);
+			transform:skewY(50deg) rotate(50deg);
+}
+#fuenf:hover
+{
+	background:#001FDF;
+	/*transform*/
+	-webkit-transform:skewX(25deg) rotate(25deg) translateY(50px);
+	   -moz-transform:skewX(25deg) rotate(25deg) translateY(50px);
+		-ms-transform:skewX(25deg) rotate(25deg) translateY(50px);
+		 -o-transform:skewX(25deg) rotate(25deg) translateY(50px);
+			transform:skewX(25deg) rotate(25deg) translateY(50px);
+}
+</style>
+</head>
+<body>
+<div id="eins"></div>
+<div id="zwei"></div>
+<div id="drei"></div>
+<div id="vier"></div>
+<div id="fuenf"></div>
+<footer>&copy; <address style="display: inline;">Florian Rappl</address>. Zuletzt aktualisiert am <time datetime="2011-11-27T11:50Z" style="display: inline;">27.11.2011 um 12:50</time></footer>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Lösung zur 22. Aufgabe</title>
+<style>
+body, html
+{
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+body
+{
+	position: relative;
+	font-family: 'Georgia', 'Times New Roman', serif;
+	font-size: 14px;
+	background-image: -o-linear-gradient(bottom, #ABCDEF, #BCDEFF);
+	background-image: -webkit-linear-gradient(bottom, #ABCDEF, #BCDEFF);
+	background-image: -moz-linear-gradient(bottom, #ABCDEF, #BCDEFF);
+	background-image: -ms-linear-gradient(bottom, #ABCDEF, #BCDEFF);
+	background-image: linear-gradient(bottom, #ABCDEF, #BCDEFF);
+}
+body > div
+{
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 600px;
+	height: 400px;
+	margin: -221px 0 0 -321px;
+	border: 1px solid #AAA;
+	background: #FFF;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 1px 3px 3px #666;
+	
+}
+button
+{
+	position: absolute;
+	right: 20px;
+	bottom: 20px;
+	border-radius: 5px;
+	background: #06C;
+	border: 1px solid #666;
+	height: 30px;
+	box-shadow: 2px 2px 2px #666;
+	color: #FFF;
+	font-weight: bold;
+	margin-top: 50px;
+}
+label
+{
+	position: relative;
+	width: 100%;
+	display: block;
+	margin: 50px 0;
+}
+input
+{
+	position: absolute;
+	right: 0;
+	width: 30%;
+	height: 25px;
+}
+select
+{
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -40px;
+	margin-top: -40px;
+	height: 80px;
+	width: 80px;
+	text-align: center;
+	font-size: 40px;
+}
+#remaining, #trials
+{
+	display: block;
+	font-weight: 100;
+	font-size: 40px;
+}
+#remaining
+{
+	color: #F00;
+}
+#trials
+{
+	margin-top: 40px;
+	font-size: 30px;
+}
+#ergebnis
+{
+	font-size: 14px;
+	color: #222;
+}
+button:hover
+{
+	background: #69C;
+	cursor: pointer;
+}
+footer
+{
+	position: absolute;
+	bottom: -10px;
+	width: 600px;
+	height: 20px;
+	left: 50%;
+	margin-left: -321px;
+	text-align: center;
+	font-size: 12px;
+	border: 1px solid #CCC;
+	background: #FFF;
+	padding: 20px;
+	border-radius: 10px;
+	color: #999;
+}
+</style>
+</head>
+<body>
+<div id="start">
+<h1>Ein neues Spiel starten</h1>
+<label>Minimum<input type="number" min=0 max=1000 id="min" value="0" /></label>
+<label>Maximum<input type="number" min=0 max=1000 id="max" value="10" /></label>
+<label>Zeit (s)<input type="number" min=10 max=3600 id="zeit" value="60" /></label>
+<button id="startbutton">Spiel starten</button>
+</div>
+<div id="game">
+<span id="remaining"></span>
+<span id="trials"></span>
+<select id="guess"><option>---</option></select>
+</div>
+<div id="end">
+<h1>Ergebnis</h1>
+<span id="ergebnis"></span>
+<button id="endbutton">Neues Spiel</button>
+</div>
+<footer>&copy; <address style="display: inline;">Florian Rappl</address>. Zuletzt aktualisiert am <time datetime="2011-11-25T22:03Z" style="display: inline;">25.11.2011 um 23:03</time></footer>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.js"></script>
+<script>
+$(document).ready(function() {
+	//Versteckt das 2.und 3. div
+	var divs = $('body > div'),
+		ran = 0,
+		remaining = 0,
+		pulse,
+		trials = 0,
+		passed = 0;
+	
+	//Click auf Startbutton festlegen
+	$('#startbutton').click(startGame);
+	
+	//Click auf Endbutton festlegen
+	$('#endbutton').click(function() {
+		showDiv(0);//Start-Div anzeigen
+		$('#guess').children().each(function(i,v) { if(i) $(v).remove(); }); //Alle bis auf 1. Element entfernen
+	}).click(); //Click gleich ausführen - Wollen diese Anzeige am Anfang!
+	
+	$('#guess').change(function() {
+		if($(this).val() * 1 === ran) //Falls richtig geraten wurde
+			endGame(true); //Beenden (Sieg!)
+		else { //Ansonsten
+			$(this)[0].selectedIndex = 0; //Index zurücksetzen
+			setTrials(trials + 1); //Anzahl der Versuche erhöhen
+		}
+	});
+	
+	function setTrials(n) {
+		trials = n; //Neu setzen
+		$('#trials').html('<strong>' + n + '</strong>. Versuch'); //Ausgeben
+	}
+	
+	function setTime(n) {
+		remaining = n; //Neu setzen
+		$('#remaining').html('Noch <strong>' + n + '</strong> Sekunden');	//Ausgeben
+	}
+
+	function showDiv(index) {
+		divs.each(function(i,v) { //Durch alle divs gehen
+			if(i !== index)  //Und wenn i ungleich dem übergebenen Index ist
+				$(v).hide();//Verstecken
+			else
+				$(v).show();//ansonsten zeigen
+		});
+	}
+	
+	function startGame() {
+		showDiv(1);//2. Div anzeigen
+		
+		var min = $('#min').val() * 1, //Minimum und Maximum auslesen
+			max = $('#max').val() * 1;
+		
+		passed = 0; //Alle Werte (zurück-)setzen
+		setTrials(1);
+		setTime($('#zeit').val() * 1);
+		ran = Math.floor(Math.random() * (max - min) + min);//Zufallszahl setzen
+		
+		pulse = setInterval(function() { //Pulse-Setzen mit Methode:
+			remaining--;
+			passed++;
+			
+			if(remaining) //Wenn noch Zeit übrig ist
+				setTime(remaining); //Zeit neu setzen
+			else
+				endGame(false); //Sonst mit Niederlage beenden
+		}, 1000); //Immer im Sekundentakt pulsen
+		
+		for(var i = min; i <= max; i++) { //Hier fügen wie Optionen zur Select-Box hinzu
+			$('<option/>').text(i).appendTo('#guess');
+		}
+	}
+	
+	function endGame(victory) { //Spiel wird beendet mit Sieg oder Niederlage
+		showDiv(2);
+		clearInterval(pulse);
+		
+		if(victory) //Entsprechende Ausgabe
+			$('#ergebnis').text('Sie haben gewonnen! Sie haben dies mit ' + trials + ' Versuchen und in ' + passed + ' Sekunden erreicht.');
+		else
+			$('#ergebnis').text('Sie haben leider verloren. Sie haben es ' + trials + ' mal versucht.');
+	}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<title>Lösung zur 21. Aufgabe - Persönlicher Blog</title>
+<style>
+body
+{
+	position: relative;
+	font-family: Georgia;
+	font-size: 12pt;
+	margin: 0;
+	padding: 0;
+	background: #fff;
+}
+header
+{
+	border-bottom: 1px solid #F00;
+	height: 50px;
+	padding: 10px 0 0 31px;/* War eigentlich auf 10px 0 0 20px -> Aber + 11px um direkt über dem "Menü" zu sein*/
+	color: #369;
+	background: #CFF;
+}
+h1
+{
+	margin: 0;
+	padding: 0;
+}
+nav
+{
+	position: absolute;
+	left: 20px; /*Das sind die 20 Pixel Abstand*/
+	top: 60px;
+	padding: 0 10px;
+	display: block;
+	width: 178px; /*Sind 200px da 178px + 2 * 20px + 2 * 1px = 200px -> Also Breite + Padding + Rahmen = Echte Breite*/
+	background: #CFF;
+	border: 1px solid #F00;
+	border-top: 0;
+	border-radius: 0 0 15px 15px;
+}
+nav > ul
+{
+	list-style: none;
+	padding: 0;
+}
+nav li
+{
+	margin: 5px 0;
+}
+nav li > a
+{
+	color: #444;
+}
+nav li > a:hover
+{
+	color: #888;
+	text-decoration: none;
+}
+article
+{
+	margin-left:250px;
+	margin-bottom:2em;
+	position: relative;
+	display: block;
+	border-left: 4px #0F0 solid;
+	padding-left: 8px;
+	background: #FDFDFD;
+}
+article+footer /*Wollen nur den ersten ändern*/
+{
+	width: 100%;
+	text-align: center;
+	font-weight: bold;
+	font-size: 8pt;
+}
+</style>
+</head>
+<body>
+<header>
+	<h1>Persönlicher Blog</h1>
+</header>
+<nav>
+	<h2>Menü</h2>
+	<ul>
+		<li><a href="#">Letzte Woche</a></li>
+		<li><a href="#">Archiv</a></li>
+	</ul>
+</nav>
+<article>
+	<h2>Heute</h2>
+	<p>Heute gabs wieder Tee zum Frühstück Das war aber dringend notwendig!</p>
+</article>
+<article>
+	<h2>Gestern</h2>
+	<p>Kein Tee mehr im Haus - musste neuen holen. Noch ein wenig weiteres herumgeschreibe.</p>
+</article>
+<footer>
+	<p><small>Copyright Informationen und noch mehr über diese Seite.</small></p>
+</footer>
+<footer>
+	&copy; <address style="display: inline;">Florian Rappl</address>. Zuletzt aktualisiert am <time datetime="2011-11-20T18:25Z" style="display: inline;">20.11.2011 um 19:25</time>
+</footer>
+</body>
+</html>
